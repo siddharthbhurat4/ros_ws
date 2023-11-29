@@ -59,8 +59,8 @@ class RectangleController(Node):
                 print(self.current_waypoint_index)
                 print("--------------------------")
 
-                if distance_error < 0.5:
-                        distance_error = 0.0
+                if distance_error < 0.4:
+                        distance_error = 0.05
 
                 linear_velocity = self.kp_linear * distance_error
                 angular_velocity = self.kp_angular * heading_error
@@ -73,7 +73,7 @@ class RectangleController(Node):
                 # self.get_logger().info(f"Publishing cmd_vel: {cmd_vel_msg}")
 
                 # Check if the robot has reached the current waypoint
-                if distance_error < 0.5 and abs(heading_error) < 0.15:
+                if distance_error < 0.4 and abs(heading_error) < 0.15:
                         if self.current_waypoint_index == len(self.waypoints)-1:
                                 cmd_vel_msg = Twist()
                                 cmd_vel_msg.linear.x = 0.0
