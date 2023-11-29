@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 class OdomSubscriber(Node):
     def __init__(self):
         super().__init__('odom_subscriber')
-        self.subscription = self.create_subscription(Odometry,'/wheel/odometry',self.odom_callback,10)
+        self.subscription = self.create_subscription(Odometry,'/odometry/filtered',self.odom_callback,10)
         self.coordinates = {'x': [], 'y': []}
 
     def odom_callback(self, msg):
