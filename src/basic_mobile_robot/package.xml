@@ -2,14 +2,14 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>basic_mobile_robot</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="sbhurat@umich.edu">ros</maintainer>
+  <version>3.0.0</version>
+  <description>basic mobile robot</description>
+  <maintainer email="sbhurat@umich.edu"></maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
-  
   <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>rviz</exec_depend>
   <exec_depend>xacro</exec_depend>
