@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                "localization_node = mobile_robot_localization.localization:main"
+                "localization_node = mobile_robot_localization.localization_gps_imu:main",
+                "controller_node = mobile_robot_localization.rectangle_drive_controller:main"
         ],
     },
 )
