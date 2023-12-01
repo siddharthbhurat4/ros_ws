@@ -51,13 +51,7 @@ You should already have Docker and VSCode with the remote containers plugin inst
 * Once the docker is built and container is ready you have to open terminal by clicking on terminal in top bar and selecting new terminal
 * After the terminal opens at the bottom, you have to run the following commands
   
-  `cd src`
-
-  `colcon build`
-
-  `source install/setup.bash`
-
-  `ros2 launch final_demo final_demo.launch.py`
+  `./run_demo.sh`
 
 * On running these commands the gazebo window will show up on the screen where you can see the robot in gazebo town world along with 2 walls at the center which denote the indoor and outdoor environment.
 
