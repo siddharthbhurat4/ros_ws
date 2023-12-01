@@ -1,8 +1,8 @@
-# VSCode ROS2 Workspace Template
+# Demonstration of Indoor and Outdoor Localization
 
-This template will get you set up using ROS2 with VSCode as your IDE.
+This repository is about using a filtering based localization methods to fuse different sensors like wheel encoders, GPS, IMU, Camera etc. to have **most accurate localization ability both indoors and outdoors** for a differential drive wheel mobile robot. I have developed everything in a docker based ROS2. All the instructions on using or producing the same results I have are provided in subsequent steps. The current demo is visualized using Gazebo which is a physics based simulation tool.
 
-See [how I develop with vscode and ros2](https://www.allisonthackston.com/articles/vscode_docker_ros2.html) for a more in-depth look on how to use this workspace.
+![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/demo_gif.gif)
 
 ## Features
 
