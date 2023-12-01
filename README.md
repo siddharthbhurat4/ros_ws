@@ -61,7 +61,7 @@ You should already have Docker and VSCode with the remote containers plugin inst
 
 * On running these commands the gazebo window will show up on the screen where you can see the robot in gazebo town world along with 2 walls at the center which denote the indoor and outdoor environment.
 
-TODO - ADD PICTURE OF GAZEBO
+![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/gazebo_bot.png)
 
 * The robot will follow a rectangular trajectory using a PID based controller
 * It will transition through those 2 walls where the GPS signal will be dropped and robot will still localize itself using the rest of the sensors
