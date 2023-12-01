@@ -1,9 +1,5 @@
 FROM althack/ros2:humble-dev 
 
-# ** [Optional] Uncomment this section to install additional packages. **
-#
-
-ARG line_to_add='export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/workspaces/ros_ws/src/basic_mobile_robot/models/'
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt -y install ~nros-humble-rqt* \
    && apt-get install wget \
@@ -13,22 +9,15 @@ RUN apt -y install ~nros-humble-rqt* \
    && apt -y install ros-humble-joint-state-publisher-gui \
    && apt -y install ros-humble-xacro \
    && apt -y install ros-humble-gazebo-ros-pkgs \
-   && pip3 install setuptools==58.2.0
-   # grep -qxF "$line_to_add" ~/.bashrc || echo "$line_to_add" >> ~/.bashrc \
-   # && apt install ros-humble-navigation2 \
-   # && apt install ros-humble-tf2-tools \
-   # && apt-get install ros-humble-hector-gazebo-plugins \
-   # && pip install geographiclib \
-   # && apt-get install ros-humble-tf2-py \
-   # && apt-get install ros-humble-tf-transformations \
-   # && apt install ros-humble-robot-localization
+   && pip3 install setuptools==58.2.0 \
+   && apt install ros-humble-navigation2 \
+   && apt install ros-humble-tf2-tools \
+   && apt-get install ros-humble-tf2-py \
+   && apt-get install ros-humble-tf-transformations \
+   && pip3 install transforms3d \
+   && pip install matplotlib
 ENV DEBIAN_FRONTEND=dialog
-#    #
-#    # Clean up
-#    && apt-get autoremove -y \
-#    && apt-get clean -y \
-#    && rm -rf /var/lib/apt/lists/*
 
-# Set up auto-source of workspace for ros user
+# Set up auto-source of workspace
 ARG WORKSPACE
 RUN echo "if [ -f ${WORKSPACE}/install/setup.bash ]; then source ${WORKSPACE}/install/setup.bash; fi" >> /home/ros/.bashrc
