@@ -49,7 +49,7 @@ You should already have Docker and VSCode with the remote containers plugin inst
 * Since you will be building this docker environment for the first time and there are some heavy files being installed, it will take few minutes for it to build
 
 * Once the docker is built and container is ready you have to open terminal by clicking on terminal in top bar and selecting new terminal
-* After the terminal opens at the bottom, you have to run the following commands
+* After the terminal opens at the bottom, you have to run the following command
   
   `./run_demo.sh`
 
