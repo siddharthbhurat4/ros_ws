@@ -2,6 +2,8 @@ FROM althack/ros2:humble-dev
 
 # ** [Optional] Uncomment this section to install additional packages. **
 #
+
+ARG line_to_add='export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/workspaces/ros_ws/src/basic_mobile_robot/models/'
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt -y install ~nros-humble-rqt* \
    && apt-get install wget \
@@ -12,6 +14,7 @@ RUN apt -y install ~nros-humble-rqt* \
    && apt -y install ros-humble-xacro \
    && apt -y install ros-humble-gazebo-ros-pkgs \
    && pip3 install setuptools==58.2.0
+   # grep -qxF "$line_to_add" ~/.bashrc || echo "$line_to_add" >> ~/.bashrc \
    # && apt install ros-humble-navigation2 \
    # && apt install ros-humble-tf2-tools \
    # && apt-get install ros-humble-hector-gazebo-plugins \
