@@ -64,6 +64,8 @@ You should already have Docker and VSCode with the remote containers plugin inst
 ![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/sensor_data.png)
 * In the plots you could see that the robot looses the gps signal when `x=5.0` and `-2.0 < Y < -8.0`. At these coordinates the estimated estimated positions of the robot goes slightly out of track and then it comes back on track using the localization algorithm. As compared to either pure sensor data or pure wheel odometry data, sensor fusion based localization seems to have higher accuracy
 
-
+## Future Work
+* Currently I am trying to incorporate camera sensor to this robot in order to use visual odometry along with other sensor when GPS data is not available. 
+* Once it is developed, it will be published on this repo soon !!
 
 ## FAQ
