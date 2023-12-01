@@ -25,6 +25,7 @@ cp "$localization_source" "$destination_directory"
 
 # Source the setup.bash file
 source install/setup.bash
-source ~/.bashrc
+
+export GAZEBO_MODEL_PATH=$(grep 'export GAZEBO_MODEL_PATH=' ~/.bashrc | cut -d'=' -f2)
 # Launch the ROS2 package
 ros2 launch final_demo final_demo.launch.py
