@@ -15,7 +15,7 @@ RUN apt -y install ~nros-humble-rqt* \
    && apt-get install ros-humble-tf2-py \
    && apt-get install ros-humble-tf-transformations \
    && pip3 install transforms3d \
-   && pip install matplotlib
+   && pip3 install matplotlib
 ENV DEBIAN_FRONTEND=dialog
 
 # Set up auto-source of workspace
