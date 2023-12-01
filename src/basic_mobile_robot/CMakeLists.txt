@@ -34,7 +34,7 @@ install(
 #   # the following line skips cpplint (only works in a git repo)
 #   # uncomment the line when this package is not in a git repo
 #   #set(ament_cmake_cpplint_FOUND TRUE)
-#   ament_lint_auto_find_test_dependencies()
+#   ament_lint_auto_find_test_dependencies
 # endif()
 
 ament_package()
