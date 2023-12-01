@@ -60,7 +60,9 @@ You should already have Docker and VSCode with the remote containers plugin inst
 * The robot will follow a rectangular trajectory using a PID based controller
 * It will transition through those 2 walls where the GPS signal will be dropped and robot will still localize itself using the rest of the sensors
 * After it completes the rectangular trajectory , it will display the plots of the trajectory followed as a result of the estimated positions using localization algorithm
-* In the plots you could see that the robot looses the gps signal when `x=5.0` and `-2.0 < Y < -8.0`. At these positions
+![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/positions.png)
+![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/sensor_data.png)
+* In the plots you could see that the robot looses the gps signal when `x=5.0` and `-2.0 < Y < -8.0`. At these coordinates the estimated estimated positions of the robot goes slightly out of track and then it comes back on track using the localization algorithm. As compared to either pure sensor data or pure wheel odometry data, sensor fusion based localization seems to have higher accuracy
 
 
 
