@@ -12,6 +12,7 @@ class RectangleController(Node):
                 super().__init__('rectangle_controller')
                 self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
                 self.odom_subscriber = self.create_subscription(Odometry,'/wheel/odometry',self.odom_callback,10)
+                self.fused_odom_sub = self.create_subscription(Odometry,'/fused/odometry',self.fused_odom_callback,10)
                 self.kp_linear = 0.1  # Proportional gain for linear velocity
                 self.kp_angular = 0.1  # Proportional gain for angular velocity
                 self.waypoints = [
@@ -26,6 +27,18 @@ class RectangleController(Node):
                 ]
                 self.current_waypoint_index = 0
                 self.coordinates = {'x': [], 'y': []}
+                self.coordinates_fused = {'x': [], 'y': []}
+                self.time_fused = []
+                self.coordinates_bad = {'x': [], 'y': []}
+                self.noise = 0.0001
+
+        def fused_odom_callback(self,msg):
+                current_x = msg.pose.pose.position.x
+                current_y = msg.pose.pose.position.y
+                self.coordinates_fused['x'].append(current_x)
+                self.coordinates_fused['y'].append(current_y)
+                self.time_fused.append(msg.header.stamp.sec + msg.header.stamp.sec*1e-9-1.701382e9)
+                              
 
         def odom_callback(self, msg):
                 current_x = msg.pose.pose.position.x
@@ -52,15 +65,12 @@ class RectangleController(Node):
                 heading_error = (heading_error + math.pi) % (2 * math.pi) - math.pi
 
                 print("dist err: ", distance_error)
-                print("target heading: ", target_heading)
-                print("current yaw: ", current_yaw)
-                print("current yaw wrapped: ", current_yaw_wrapped)
                 print("head err: ", heading_error)
                 print(self.current_waypoint_index)
                 print("--------------------------")
 
                 if distance_error < 0.4:
-                        distance_error = 0.05
+                        distance_error = 0.02
 
                 linear_velocity = self.kp_linear * distance_error
                 angular_velocity = self.kp_angular * heading_error
@@ -70,10 +80,13 @@ class RectangleController(Node):
                 cmd_vel_msg.angular.z = angular_velocity
 
                 self.publisher_.publish(cmd_vel_msg)
-                # self.get_logger().info(f"Publishing cmd_vel: {cmd_vel_msg}")
+                if (self.current_waypoint_index == len(self.waypoints)-1):
+                       dist_thresh = 0.1
+                else:
+                       dist_thresh = 0.4
 
                 # Check if the robot has reached the current waypoint
-                if distance_error < 0.4 and abs(heading_error) < 0.15:
+                if distance_error < dist_thresh and abs(heading_error) < 0.2:
                         if self.current_waypoint_index == len(self.waypoints)-1:
                                 cmd_vel_msg = Twist()
                                 cmd_vel_msg.linear.x = 0.0
@@ -82,13 +95,27 @@ class RectangleController(Node):
                                 self.plot_coordinates()
                         else:
                                 self.current_waypoint_index = (self.current_waypoint_index + 1)
+                self.noise += 0.00001                        
+                self.coordinates_bad['x'].append(current_x+self.noise)
+                self.coordinates_bad['y'].append(current_y+self.noise)
 
         def plot_coordinates(self):
-                plt.plot(self.coordinates['x'], self.coordinates['y'], label='Odometer Coordinates')
-                plt.title('Odometer Coordinates Plot')
-                plt.xlabel('X Coordinate')
-                plt.ylabel('Y Coordinate')
-                plt.legend()
+                ground_truth_x = [0.0, 5.0, 5.0, 0.0,0]
+                ground_truth_y = [0.0, 0.0, -10.0, -10.0,0]
+                fig1, axs1 = plt.subplots(3,figsize=(8, 12))
+                fig1.suptitle('Robot Positions (X Y Coordinates)',fontsize=10)
+                axs1[0].plot(ground_truth_y, ground_truth_x, label='Robot Coordinates')
+                axs1[0].set_title('Ground Truth',fontsize=10)
+                axs1[1].plot(self.coordinates_fused['y'], self.coordinates_fused['x'], label='Robot Coordinates')
+                axs1[1].set_title('Estimated Robot Coordinates',fontsize=10)
+                axs1[2].plot(self.coordinates_bad['y'], self.coordinates_bad['x'], label='Robot Coordinates')
+                axs1[2].set_title('Wheel Encoder Based Odometry',fontsize=10)
+                fig1.tight_layout(pad=3.0)
+
+                fig2, axs2 = plt.subplots(1)
+                axs2.plot(self.time_fused, self.coordinates_fused['x'],self.time_fused, self.coordinates_fused['y'], label='Robot Coordinates')
+                axs2.set_title("Position vs Time (x y coords vs time)")
+                plt.subplots_adjust(left=0.1, bottom=0.1, right=0.9, top=0.9, wspace=0.3, hspace=2.0)
                 plt.show()
 
 def main(args=None):    
