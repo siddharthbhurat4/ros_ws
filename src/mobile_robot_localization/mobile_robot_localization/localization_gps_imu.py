@@ -22,7 +22,7 @@ class SensorFusionLocalization(Node):
         # Subscribe to cmd_vel
         self.cmd_vel_subscription = self.create_subscription(Twist,'/cmd_vel',self.cmd_vel_callback,10)
         # Subscribe to cmd_vel
-        self.gps_subscription = self.create_subscription(Odometry,'/gps/data',self.gps_callback,10)
+        self.gps_subscription = self.create_subscription(Odometry,'/wheel/odometry',self.gps_callback,10)
 
         self.x = 0.0
         self.y = 0.0
@@ -35,6 +35,7 @@ class SensorFusionLocalization(Node):
         self.state_estimate = np.array([self.x,self.y,self.theta]).T
         self.control_vector = np.array([self.v_lin,self.omega]).T
         self.gps_obs_vector = np.array([0.0, 0.0, 0.0]).T
+        self.num = 0
 
         self.P = np.array([[0.1, 0.0, 0.0],
                            [0.0, 0.1, 0.0],
@@ -86,9 +87,30 @@ class SensorFusionLocalization(Node):
                       [  0.0,  0.0, 1.0]])
         
         # Sensor measurement noise covariance matrix R
-        R = np.array([[0.01,   0.0,    0.0],
-                      [  0.0, 0.01,    0.0],
-                      [  0.0,    0.0, 0.01]])       
+        gps_x = self.gps_obs_vector[0]
+        gps_y = self.gps_obs_vector[1]
+        thresh = 2.0
+        indoor_x = 5.0
+        indoor_y_min = -2.0
+        indoor_y_max = -8.0
+        
+         #Changing indoor outdoor conditions by making the sensor to be less accurate
+        if (indoor_x - thresh < gps_x < indoor_x + thresh) and (indoor_y_max < gps_y < indoor_y_min):
+            self.get_logger().warn(f'ROBOT IS INDOORS !', once=True)
+            R = np.array([[2.0,   0.0,    0.0],
+                          [  0.0, 2.0,    0.0],
+                          [  0.0,    0.0, 2.0]])    
+            self.num = 75889933   
+        else:
+            self.get_logger().warn(f'ROBOT IS OUTDOORS !', once=True)
+            R = np.array([[0.01,   0.0,    0.0],
+                          [  0.0, 0.01,    0.0],
+                          [  0.0,    0.0, 0.01]])
+            if (self.num == 75889933):
+                self.num += 1
+
+        if (self.num == 75889934):
+            self.get_logger().warn(f'ROBOT IS BACK OUTDOORS !', once=True)
         
         #sensor noise
         sensor_noise = np.array([0.001,0.001,0.003])
@@ -97,13 +119,6 @@ class SensorFusionLocalization(Node):
         self.curr_time = self.get_clock().now().nanoseconds*1e-9
 
         delta_time = (self.curr_time - self.prev_time)/2
-        # print(delta_time)
-        # print("-----------")
-        # print("Ashape: ",A.shape)
-        # print("State Est Shape: ",self.state_estimate.shape)
-        # print("Bshape: ",self.getBLinearized(self.state_estimate[2],delta_time).shape)
-        # print("Control Shape", self.control_vector.shape)
-        # print("p noise shape", process_noise.shape)
         self.state_estimate = A @ (self.state_estimate) + (
             self.getBLinearized(self.wrapToPi(self.state_estimate[2]),delta_time)) @ (
                 self.control_vector)+(
@@ -134,7 +149,7 @@ class SensorFusionLocalization(Node):
         self.x = self.state_estimate[0]
         self.y = self.state_estimate[1]
         self.theta = self.state_estimate[2]
-        print("State After: ",self.state_estimate)
+        # print("State After: ",self.state_estimate)
         self.prev_time = self.curr_time
         self.publish_fused_odom()
 
@@ -177,11 +192,8 @@ class SensorFusionLocalization(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-
     sensor_fusion_node = SensorFusionLocalization()
-
     rclpy.spin(sensor_fusion_node)
-
     sensor_fusion_node.destroy_node()
     rclpy.shutdown()
 
