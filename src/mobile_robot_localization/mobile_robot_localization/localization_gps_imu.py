@@ -96,13 +96,13 @@ class SensorFusionLocalization(Node):
         
          #Changing indoor outdoor conditions by making the sensor to be less accurate
         if (indoor_x - thresh < gps_x < indoor_x + thresh) and (indoor_y_max < gps_y < indoor_y_min):
-            self.get_logger().warn(f'ROBOT IS INDOORS !', once=True)
+            self.get_logger().info(f'ROBOT IS INDOORS !', once=True)
             R = np.array([[2.0,   0.0,    0.0],
                           [  0.0, 2.0,    0.0],
                           [  0.0,    0.0, 2.0]])    
             self.num = 75889933   
         else:
-            self.get_logger().warn(f'ROBOT IS OUTDOORS !', once=True)
+            self.get_logger().info(f'ROBOT IS OUTDOORS !!', once=True)
             R = np.array([[0.01,   0.0,    0.0],
                           [  0.0, 0.01,    0.0],
                           [  0.0,    0.0, 0.01]])
@@ -110,7 +110,7 @@ class SensorFusionLocalization(Node):
                 self.num += 1
 
         if (self.num == 75889934):
-            self.get_logger().warn(f'ROBOT IS BACK OUTDOORS !', once=True)
+            self.get_logger().info(f'ROBOT IS BACK OUTDOORS !', once=True)
         
         #sensor noise
         sensor_noise = np.array([0.001,0.001,0.003])
