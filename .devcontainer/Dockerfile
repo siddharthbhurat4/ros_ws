@@ -16,7 +16,9 @@ RUN apt -y install ~nros-humble-rqt* \
    && apt-get -y install ros-humble-tf-transformations \
    && pip3 install transforms3d \
    && pip3 install matplotlib \
-   && apt -y install ros-humble-rviz2
+   && apt -y install ros-humble-rviz2 \
+   && rosdep update \
+   && rosdep install rviz2
 ENV DEBIAN_FRONTEND=dialog
 
 # Set up auto-source of workspace
