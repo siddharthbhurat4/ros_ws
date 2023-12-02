@@ -88,7 +88,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         parameters=[{'use_sim_time': use_sim_time,
                     'robot_description': Command(['xacro ', model])}],
-                    arguments=[default_model_path])
+        arguments=[default_model_path])
 
     # Create the launch description and populate
     ld = LaunchDescription()
