@@ -61,7 +61,7 @@ class RectangleController(Node):
                 msg.orientation.z,
                 msg.orientation.w])[2]
         self.imu_data.append(np.rad2deg(self.wrapToPi(self.theta_imu)))
-        self.imu_time.append(msg.header.stamp.sec + 
+        self.imu_time.append(msg.header.stamp.sec +
                              msg.header.stamp.sec*1e-9-self.start_time)
 
     def fused_odom_callback(self, msg):
@@ -70,7 +70,7 @@ class RectangleController(Node):
         current_y = msg.pose.pose.position.y
         self.coordinates_fused['x'].append(current_x)
         self.coordinates_fused['y'].append(current_y)
-        self.time_fused.append(msg.header.stamp.sec + 
+        self.time_fused.append(msg.header.stamp.sec +
                                msg.header.stamp.sec*1e-9-self.start_time)
 
     def odom_callback(self, msg):
@@ -82,30 +82,30 @@ class RectangleController(Node):
         indoor_y_min = -2.0
         indoor_y_max = -8.0
         if (indoor_x - thresh < current_x < indoor_x + thresh) and  \
-            (indoor_y_max < current_y < indoor_y_min):
-                self.coordinates['x'].append(4.89)
-                self.coordinates['y'].append(-2.10)
-                self.coordinates_time.append(msg.header.stamp.sec + 
-                                             msg.header.stamp.sec*1e-9-self.start_time)
+                (indoor_y_max < current_y < indoor_y_min):
+            self.coordinates['x'].append(4.89)
+            self.coordinates['y'].append(-2.10)
+            self.coordinates_time.append(msg.header.stamp.sec +
+                                        msg.header.stamp.sec*1e-9-self.start_time)
         else:
-                self.coordinates['x'].append(current_x)
-                self.coordinates['y'].append(current_y)
-                self.coordinates_time.append(msg.header.stamp.sec +
-                                             msg.header.stamp.sec*1e-9-self.start_time)
+            self.coordinates['x'].append(current_x)
+            self.coordinates['y'].append(current_y)
+            self.coordinates_time.append(msg.header.stamp.sec +
+                                        msg.header.stamp.sec*1e-9-self.start_time)
 
         current_yaw = euler_from_quaternion([
-        msg.pose.pose.orientation.x,
-        msg.pose.pose.orientation.y,
-        msg.pose.pose.orientation.z,
-        msg.pose.pose.orientation.w])[2]
-        
+            msg.pose.pose.orientation.x,
+            msg.pose.pose.orientation.y,
+            msg.pose.pose.orientation.z,
+            msg.pose.pose.orientation.w])[2]
+
         current_yaw_wrapped = self.wrapToPi(current_yaw)
 
         target_x = self.waypoints[self.current_waypoint_index]['x']
         target_y = self.waypoints[self.current_waypoint_index]['y']
 
-        prev_x = self.waypoints[max(0,self.current_waypoint_index-1)]['x']
-        prev_y = self.waypoints[max(0,self.current_waypoint_index-1)]['y']
+        prev_x = self.waypoints[max(0, self.current_waypoint_index-1)]['x']
+        prev_y = self.waypoints[max(0, self.current_waypoint_index-1)]['y']
         target_heading = math.atan2(target_y-prev_y, target_x-prev_x)
 
         distance_error = math.sqrt((target_x - current_x)**2 + (target_y - current_y)**2)
@@ -121,7 +121,7 @@ class RectangleController(Node):
         print("--------------------------")
 
         if distance_error < self.dist_thresh:
-                distance_error = 0.0
+            distance_error = 0.0
 
         linear_velocity = self.kp_linear * distance_error
         angular_velocity = self.kp_angular * heading_error + (
@@ -133,10 +133,10 @@ class RectangleController(Node):
         cmd_vel_msg.angular.z = angular_velocity
 
         self.publisher_.publish(cmd_vel_msg)
-        
+
         # Check if the robot has reached the current waypoint
         if distance_error < self.dist_thresh and \
-            abs(heading_error) < self.heading_thresh: # 0.12
+                abs(heading_error) < self.heading_thresh: # 0.12
             if self.current_waypoint_index == len(self.waypoints)-1:
                 cmd_vel_msg = Twist()
                 cmd_vel_msg.linear.x = 0.0
@@ -144,12 +144,12 @@ class RectangleController(Node):
                 self.publisher_.publish(cmd_vel_msg)
                 self.plot_coordinates()
                 self.get_logger().warn("RECTANGLE FOLLOW TEST:"
-                                            "Robot reached all the 4"
-                                            "waypoints using the controller,"
-                                            "Rectangle Completed !!", once=True)
+                                        "Robot reached all the 4"
+                                        "waypoints using the controller,"
+                                        "Rectangle Completed !!", once=True)
             else:
                 self.current_waypoint_index = (self.current_waypoint_index + 1)
-        self.noise += 0.0005                        
+        self.noise += 0.0005
         self.coordinates_bad['x'].append(current_x+self.noise)
         self.coordinates_bad['y'].append(current_y+self.noise)
 
@@ -159,8 +159,8 @@ class RectangleController(Node):
 
     def plot_coordinates(self):
 
-        ground_truth_x = [0.0, 5.0, 5.0, 0.0,0]
-        ground_truth_y = [0.0, 0.0, -10.0, -10.0,0]
+        ground_truth_x = [0.0, 5.0, 5.0, 0.0, 0.0]
+        ground_truth_y = [0.0, 0.0, -10.0, -10.0, 0.0]
         fig1, axs1 = plt.subplots(3, figsize=(8, 12))
         fig1.suptitle('Robot Positions (X Y Coordinates)', fontsize=10)
         axs1[0].plot(ground_truth_y, ground_truth_x, label='Robot Coordinates')

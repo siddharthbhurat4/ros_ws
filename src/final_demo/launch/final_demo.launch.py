@@ -13,7 +13,7 @@ def generate_launch_description():
     # Set the path to different files and folders.
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
-    default_launch_dir = os.path.join(pkg_share, 'launch')
+    # default_launch_dir = os.path.join(pkg_share, 'launch')
     default_model_path = os.path.join(pkg_share, 'models/basic_mobile_bot_v1.urdf')
     world_file_name = 'basic_mobile_bot_world/town.world'
     world_path = os.path.join(pkg_share, 'worlds', world_file_name)
@@ -26,10 +26,10 @@ def generate_launch_description():
     use_simulator = LaunchConfiguration('use_simulator')
     world = LaunchConfiguration('world')
 
-    # Declare the launch arguments  
+    # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
-        name='model', 
-        default_value=default_model_path, 
+        name='model',
+        default_value=default_model_path,
         description='Absolute path to robot urdf file')
 
     declare_simulator_cmd = DeclareLaunchArgument(
@@ -57,11 +57,10 @@ def generate_launch_description():
         default_value=world_path,
         description='Full path to the world model file to load')
 
-
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
-                                                    'launch', 
+                                                    'launch',
                                                     'gzserver.launch.py')),
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
@@ -74,7 +73,6 @@ def generate_launch_description():
         condition=IfCondition(PythonExpression([use_simulator,
                                                 ' and not ',
                                                 headless])))
-
 
     # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
     start_robot_state_publisher_cmd = Node(
@@ -89,6 +87,7 @@ def generate_launch_description():
         package="mobile_robot_localization",
         executable="controller_node",
     )
+    
     localization_node = Node(
         package="mobile_robot_localization",
         executable="localization_node"
