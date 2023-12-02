@@ -9,9 +9,9 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
-    
+
     # Set the path to different files and folders.
-    pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')   
+    pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
     default_launch_dir = os.path.join(pkg_share, 'launch')
     default_model_path = os.path.join(pkg_share, 'models/basic_mobile_bot_v1.urdf')
@@ -27,10 +27,10 @@ def generate_launch_description():
     use_simulator = LaunchConfiguration('use_simulator')
     world = LaunchConfiguration('world')
 
-    # Declare the launch arguments  
+    # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
         name='model', 
-        default_value=default_model_path, 
+        default_value=default_model_path,
         description='Absolute path to robot urdf file')
 
     declare_simulator_cmd = DeclareLaunchArgument(
@@ -64,7 +64,7 @@ def generate_launch_description():
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
 
-    # Start Gazebo client    
+    # Start Gazebo client
     start_gazebo_client_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
         condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))

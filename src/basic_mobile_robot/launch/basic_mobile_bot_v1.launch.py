@@ -21,9 +21,9 @@ def generate_launch_description():
     use_robot_state_pub = LaunchConfiguration('use_robot_state_pub')
     use_sim_time = LaunchConfiguration('use_sim_time')
 
-    # Declare the launch arguments  
+    # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
-        name='model', 
+        name='model',
         default_value=default_model_path, 
         description='Absolute path to robot urdf file')
 
@@ -71,7 +71,7 @@ def generate_launch_description():
     # Declare the launch options
     ld.add_action(declare_model_path_cmd)
     ld.add_action(declare_use_joint_state_publisher_cmd)
-    ld.add_action(declare_use_robot_state_pub_cmd)  
+    ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_use_sim_time_cmd)
 
     # Add any actions

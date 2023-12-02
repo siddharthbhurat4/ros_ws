@@ -9,7 +9,10 @@ class OdomSubscriber(Node):
     def __init__(self):
 
         super().__init__('odom_subscriber')
-        self.subscription = self.create_subscription(Odometry, '/fused/odometry', self.odom_callback, 10)
+        self.subscription = self.create_subscription(Odometry,
+                                                     '/fused/odometry',
+                                                     self.odom_callback,
+                                                     10)
         self.coordinates = {'x': [], 'y': []}
 
     def odom_callback(self, msg):
@@ -22,7 +25,8 @@ class OdomSubscriber(Node):
 
     def plot_coordinates(self):
 
-        plt.plot(self.coordinates['x'], self.coordinates['y'], label='Odometer Coordinates')
+        plt.plot(self.coordinates['x'], self.coordinates['y'],
+                 label='Odometer Coordinates')
         plt.title('Odometer Coordinates Plot')
         plt.xlabel('X Coordinate')
         plt.ylabel('Y Coordinate')
@@ -44,5 +48,5 @@ def main(args=None):
     rclpy.shutdown()
 
 if __name__ == '__main__':
-    
+
     main()

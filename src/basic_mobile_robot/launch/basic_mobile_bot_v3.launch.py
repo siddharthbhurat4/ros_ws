@@ -11,11 +11,11 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     # Set the path to different files and folders.
-    pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')   
+    pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
     default_launch_dir = os.path.join(pkg_share, 'launch')
     default_model_path = os.path.join(pkg_share, 'models/basic_mobile_bot_v1.urdf')
-    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml') 
+    robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml')
     world_file_name = 'basic_mobile_bot_world/town.world'
     world_path = os.path.join(pkg_share, 'worlds', world_file_name)
 
@@ -64,7 +64,7 @@ def generate_launch_description():
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
 
-    # Start Gazebo client    
+    # Start Gazebo client
     start_gazebo_client_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
         condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))
@@ -75,7 +75,7 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[robot_localization_file_path, 
+        parameters=[robot_localization_file_path,
         {'use_sim_time': use_sim_time}])
 
     # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
@@ -83,7 +83,7 @@ def generate_launch_description():
         condition=IfCondition(use_robot_state_pub),
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'use_sim_time': use_sim_time, 
+        parameters=[{'use_sim_time': use_sim_time,
         'robot_description': Command(['xacro ', model])}],
         arguments=[default_model_path])
 
@@ -92,7 +92,7 @@ def generate_launch_description():
     # Declare the launch options
     ld.add_action(declare_model_path_cmd)
     ld.add_action(declare_simulator_cmd)
-    ld.add_action(declare_use_robot_state_pub_cmd) 
+    ld.add_action(declare_use_robot_state_pub_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_simulator_cmd)
     ld.add_action(declare_world_cmd)

@@ -1,18 +1,19 @@
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
-from nav_msgs.msg import Odometry
-import matplotlib.pyplot as plt
-import math
 import time
 
+
 class RectanglePublisher(Node):
+
     def __init__(self):
+
         super().__init__('rectangle_publisher')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
         self.cmd_vel_msg = Twist()
 
     def drive_rect(self):
+
         turn_time = 10.7
         forward_length_time = 31.0
         forward_width_time = 15.0
@@ -24,7 +25,7 @@ class RectanglePublisher(Node):
         self.cmd_vel_msg.linear.x = linear_speed
         self.cmd_vel_msg.angular.z = 0.0
         self.publish_cmd_vel()
-        time.sleep(forward_width_time)  # Move forward for 2 seconds
+        time.sleep(forward_width_time)
 
         # Stop
         self.cmd_vel_msg.linear.x = 0.0
@@ -104,19 +105,20 @@ class RectanglePublisher(Node):
         self.publish_cmd_vel()
         time.sleep(1)  # Pause for 1 second
 
-
     def publish_cmd_vel(self):
+
         self.publisher_.publish(self.cmd_vel_msg)
         # self.get_logger().info(f"Publishing cmd_vel: {self.cmd_vel_msg}")
 
 def main(args=None):
+
     rclpy.init(args=args)
     rectangle_publisher = RectanglePublisher()
     rectangle_publisher.drive_rect()
     rclpy.spin(rectangle_publisher)
-
     rectangle_publisher.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
+    
     main()
