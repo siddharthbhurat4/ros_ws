@@ -1,7 +1,7 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition, UnlessCondition
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
@@ -29,7 +29,7 @@ def generate_launch_description():
 
     # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
-        name='model', 
+        name='model',
         default_value=default_model_path,
         description='Absolute path to robot urdf file')
 
@@ -78,8 +78,9 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'use_sim_time': use_sim_time,
-        'robot_description': Command(['xacro ', model])}],
+                    'robot_description': Command(['xacro ', model])}],
         arguments=[default_model_path])
+    
     # Create the launch description and populate
     ld = LaunchDescription()
     ld.add_action(declare_model_path_cmd)

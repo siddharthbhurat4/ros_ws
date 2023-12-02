@@ -60,8 +60,8 @@ def generate_launch_description():
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
-                                            'launch',
-                                            'gzserver.launch.py')),
+                                    'launch',
+                                    'gzserver.launch.py')),
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
 
@@ -80,7 +80,7 @@ def generate_launch_description():
             package='robot_state_publisher',
             executable='robot_state_publisher',
             parameters=[{'use_sim_time': use_sim_time,
-            'robot_description': Command(['xacro ', model])}],
+                        'robot_description': Command(['xacro', model])}],
             arguments=[default_model_path])
 
     controller_node = Node(

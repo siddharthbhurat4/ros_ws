@@ -79,8 +79,7 @@ def generate_launch_description():
         executable='ekf_node',
         name='ekf_filter_node',
         output='screen',
-        parameters=[robot_localization_file_path,
-        {'use_sim_time': use_sim_time}])
+        parameters=[robot_localization_file_path, {'use_sim_time': use_sim_time}])
 
     # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
     start_robot_state_publisher_cmd = Node(
@@ -88,8 +87,9 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'use_sim_time': use_sim_time,
-        'robot_description': Command(['xacro ', model])}],
-        arguments=[default_model_path])
+                    'robot_description': Command(['xacro ', model])}], 
+                    arguments=[default_model_path])
+    
     # Create the launch description and populate
     ld = LaunchDescription()
     # Declare the launch options
