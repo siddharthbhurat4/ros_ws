@@ -70,8 +70,8 @@ class RectangleController(Node):
         current_y = msg.pose.pose.position.y
         self.coordinates_fused['x'].append(current_x)
         self.coordinates_fused['y'].append(current_y)
-        self.time_fused.append(msg.header.stamp.sec +\
-                                msg.header.stamp.sec*1e-9-self.start_time)
+        self.time_fused.append(msg.header.stamp.sec +
+                               msg.header.stamp.sec*1e-9-self.start_time)
 
     def odom_callback(self, msg):
 
@@ -86,12 +86,12 @@ class RectangleController(Node):
             self.coordinates['x'].append(4.89)
             self.coordinates['y'].append(-2.10)
             self.coordinates_time.append(msg.header.stamp.sec +
-                                        msg.header.stamp.sec*1e-9-self.start_time)
+                                         msg.header.stamp.sec*1e-9-self.start_time)
         else:
             self.coordinates['x'].append(current_x)
             self.coordinates['y'].append(current_y)
-            self.coordinates_time.append(msg.header.stamp.sec +\
-                                        msg.header.stamp.sec*1e-9-self.start_time)
+            self.coordinates_time.append(msg.header.stamp.sec +
+                                         msg.header.stamp.sec*1e-9-self.start_time)
 
         current_yaw = euler_from_quaternion([
             msg.pose.pose.orientation.x,
@@ -143,9 +143,9 @@ class RectangleController(Node):
                 cmd_vel_msg.angular.z = 0.0
                 self.publisher_.publish(cmd_vel_msg)
                 self.plot_coordinates()
-                self.get_logger().warn("RECTANGLE FOLLOW TEST: Robot reached all the 4"
-                                        "waypoints using the controller,"
-                                        "Rectangle Completed !!", once=True)
+                self.get_logger().info("RECTANGLE FOLLOW TEST: Robot reached all the 4"
+                                    "waypoints using the controller,"
+                                    "Rectangle Completed !!", once=True)
             else:
                 self.current_waypoint_index = (self.current_waypoint_index + 1)
         self.noise += 0.0005
