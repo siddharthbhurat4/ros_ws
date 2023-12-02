@@ -110,6 +110,7 @@ class RectanglePublisher(Node):
         self.publisher_.publish(self.cmd_vel_msg)
         # self.get_logger().info(f"Publishing cmd_vel: {self.cmd_vel_msg}")
 
+
 def main(args=None):
 
     rclpy.init(args=args)
@@ -119,6 +120,7 @@ def main(args=None):
     rectangle_publisher.destroy_node()
     rclpy.shutdown()
 
+
 if __name__ == '__main__':
-    
+
     main()

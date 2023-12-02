@@ -143,10 +143,10 @@ class RectangleController(Node):
                 cmd_vel_msg.angular.z = 0.0
                 self.publisher_.publish(cmd_vel_msg)
                 self.plot_coordinates()
-                self.get_logger().warn(f'RECTANGLE FOLLOW TEST: 
-                                            Robot reached all the 4 
-                                            waypoints using the controller, 
-                                            Rectangle Completed !!', once=True)
+                self.get_logger().warn(f"RECTANGLE FOLLOW TEST:
+                                            Robot reached all the 4
+                                            waypoints using the controller,
+                                            Rectangle Completed !!", once=True)
             else:
                 self.current_waypoint_index = (self.current_waypoint_index + 1)
         self.noise += 0.0005                        
@@ -189,6 +189,7 @@ class RectangleController(Node):
         fig2.tight_layout()
         plt.show()
 
+
 def main(args=None):
 
     rclpy.init(args=args)
@@ -198,6 +199,7 @@ def main(args=None):
     except KeyboardInterrupt:
         rectangle_controller.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
 

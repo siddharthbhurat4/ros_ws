@@ -33,6 +33,7 @@ class OdomSubscriber(Node):
         plt.legend()
         plt.show()
 
+
 def main(args=None):
 
     rclpy.init(args=args)
@@ -46,6 +47,7 @@ def main(args=None):
 
     odom_subscriber.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
 
