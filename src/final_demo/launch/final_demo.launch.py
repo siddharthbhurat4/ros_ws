@@ -80,7 +80,7 @@ def generate_launch_description():
         executable='robot_state_publisher',
         parameters=[{'use_sim_time': use_sim_time,
                     'robot_description': Command(['xacro ', model])}],
-                    arguments=[default_model_path])
+        arguments=[default_model_path])
 
     controller_node = Node(
         package="mobile_robot_localization",
