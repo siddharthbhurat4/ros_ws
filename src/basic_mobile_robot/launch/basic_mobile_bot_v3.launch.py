@@ -1,7 +1,7 @@
 import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition, UnlessCondition
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
@@ -13,7 +13,7 @@ def generate_launch_description():
     # Set the path to different files and folders.
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')
     pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')
-    default_launch_dir = os.path.join(pkg_share, 'launch')
+    # default_launch_dir = os.path.join(pkg_share, 'launch')
     default_model_path = os.path.join(pkg_share, 'models/basic_mobile_bot_v1.urdf')
     robot_localization_file_path = os.path.join(pkg_share, 'config/ekf.yaml')
     world_file_name = 'basic_mobile_bot_world/town.world'

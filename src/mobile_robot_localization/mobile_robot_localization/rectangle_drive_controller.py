@@ -86,12 +86,12 @@ class RectangleController(Node):
             self.coordinates['x'].append(4.89)
             self.coordinates['y'].append(-2.10)
             self.coordinates_time.append(msg.header.stamp.sec +
-                                        msg.header.stamp.sec*1e-9-self.start_time)
+                                            msg.header.stamp.sec*1e-9-self.start_time)
         else:
             self.coordinates['x'].append(current_x)
             self.coordinates['y'].append(current_y)
             self.coordinates_time.append(msg.header.stamp.sec +
-                                        msg.header.stamp.sec*1e-9-self.start_time)
+                                            msg.header.stamp.sec*1e-9-self.start_time)
 
         current_yaw = euler_from_quaternion([
             msg.pose.pose.orientation.x,
@@ -136,7 +136,7 @@ class RectangleController(Node):
 
         # Check if the robot has reached the current waypoint
         if distance_error < self.dist_thresh and \
-                abs(heading_error) < self.heading_thresh: # 0.12
+                abs(heading_error) < self.heading_thresh:  # 0.12
             if self.current_waypoint_index == len(self.waypoints)-1:
                 cmd_vel_msg = Twist()
                 cmd_vel_msg.linear.x = 0.0
@@ -144,9 +144,9 @@ class RectangleController(Node):
                 self.publisher_.publish(cmd_vel_msg)
                 self.plot_coordinates()
                 self.get_logger().warn("RECTANGLE FOLLOW TEST:"
-                                        "Robot reached all the 4"
-                                        "waypoints using the controller,"
-                                        "Rectangle Completed !!", once=True)
+                                    "Robot reached all the 4"
+                                    "waypoints using the controller,"
+                                    "Rectangle Completed !!", once=True)
             else:
                 self.current_waypoint_index = (self.current_waypoint_index + 1)
         self.noise += 0.0005
