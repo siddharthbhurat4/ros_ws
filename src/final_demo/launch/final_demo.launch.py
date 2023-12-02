@@ -75,12 +75,12 @@ def generate_launch_description():
 
     # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
     start_robot_state_publisher_cmd = Node(
-            condition=IfCondition(use_robot_state_pub),
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            parameters=[{'use_sim_time': use_sim_time,
-                        'robot_description': Command(['xacro', model])}],
-            arguments=[default_model_path])
+        condition=IfCondition(use_robot_state_pub),
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        parameters=[{'use_sim_time': use_sim_time,
+                    'robot_description': Command(['xacro ', model])}],
+                    arguments=[default_model_path])
 
     controller_node = Node(
         package="mobile_robot_localization",
