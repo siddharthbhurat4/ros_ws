@@ -9,13 +9,15 @@ from tf_transformations import euler_from_quaternion, quaternion_from_euler
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class RectangleController(Node):
+
     def __init__(self):
         super().__init__('rectangle_controller')
         self.publisher_ = self.create_publisher(Twist, 'cmd_vel', 10)
-        self.odom_subscriber = self.create_subscription(Odometry,'/wheel/odometry',self.odom_callback,10)
-        self.fused_odom_sub = self.create_subscription(Odometry,'/fused/odometry',self.fused_odom_callback,10)
-        self.imu_subscription = self.create_subscription(Imu,'/imu/data',self.imu_callback,10)
+        self.odom_subscriber = self.create_subscription(Odometry, '/wheel/odometry', self.odom_callback, 10)
+        self.fused_odom_sub = self.create_subscription(Odometry, '/fused/odometry', self.fused_odom_callback, 10)
+        self.imu_subscription = self.create_subscription(Imu, '/imu/data', self.imu_callback, 10)
         self.kp_linear = 0.07  # Proportional gain for linear velocity  0.07
         self.kp_angular = 0.07 # Proportional gain for angular velocity 0.08
         self.kd_angular = 0.0 # Derivative gain for angular velocity
@@ -45,6 +47,7 @@ class RectangleController(Node):
 
 
     def imu_callback(self, msg):
+
         self.theta_imu = euler_from_quaternion([
                 msg.orientation.x,
                 msg.orientation.y,
@@ -56,6 +59,7 @@ class RectangleController(Node):
 			
 
     def fused_odom_callback(self,msg):
+
         current_x = msg.pose.pose.position.x
         current_y = msg.pose.pose.position.y
         self.coordinates_fused['x'].append(current_x)
@@ -64,6 +68,7 @@ class RectangleController(Node):
 							
 
     def odom_callback(self, msg):
+
         current_x = msg.pose.pose.position.x
         current_y = msg.pose.pose.position.y
         thresh = 2.0
@@ -110,8 +115,9 @@ class RectangleController(Node):
                 distance_error = 0.0
 
         linear_velocity = self.kp_linear * distance_error
-        angular_velocity = self.kp_angular * heading_error + (self.kd_angular * heading_error_derivative)
-        # (ki_angular * self.integral_angular) + (kd_angular * heading_error_derivative)
+        angular_velocity = self.kp_angular * heading_error + (
+            self.kd_angular * heading_error_derivative)
+        # (ki_angular * self.integral_angular)+(kd_angular * heading_error_derivative)
 
         cmd_vel_msg = Twist()
         cmd_vel_msg.linear.x = linear_velocity
@@ -135,32 +141,35 @@ class RectangleController(Node):
         self.coordinates_bad['y'].append(current_y+self.noise)
 	
     def wrapToPi(self,angle):
+
         return (angle + math.pi) % (2 * math.pi) - math.pi
 
     def plot_coordinates(self):
+
         ground_truth_x = [0.0, 5.0, 5.0, 0.0,0]
         ground_truth_y = [0.0, 0.0, -10.0, -10.0,0]
-        fig1, axs1 = plt.subplots(3,figsize=(8, 12))
-        fig1.suptitle('Robot Positions (X Y Coordinates)',fontsize=10)
+        fig1, axs1 = plt.subplots(3, figsize=(8, 12))
+        fig1.suptitle('Robot Positions (X Y Coordinates)', fontsize=10)
         axs1[0].plot(ground_truth_y, ground_truth_x, label='Robot Coordinates')
-        axs1[0].set_title('Ground Truth',fontsize=10)
+        axs1[0].set_title('Ground Truth', fontsize=10)
         axs1[1].plot(self.coordinates_fused['y'], self.coordinates_fused['x'], label='Robot Coordinates')
-        axs1[1].set_title('Estimated Robot Coordinates',fontsize=10)
+        axs1[1].set_title('Estimated Robot Coordinates', fontsize=10)
         axs1[2].plot(self.coordinates_bad['y'], self.coordinates_bad['x'], label='Robot Coordinates')
-        axs1[2].set_title('Wheel Encoder Based Odometry',fontsize=10)
+        axs1[2].set_title('Wheel Encoder Based Odometry', fontsize=10)
         fig1.tight_layout(pad=3.0)
 
         fig2, axs2 = plt.subplots(3)
-        axs2[0].plot(self.time_fused, self.coordinates_fused['x'],self.time_fused, self.coordinates_fused['y'], label='Robot Coordinates')
+        axs2[0].plot(self.time_fused, self.coordinates_fused['x'], self.time_fused, self.coordinates_fused['y'], label='Robot Coordinates')
         axs2[0].set_title("Position vs Time (x y coords vs time)")
         axs2[1].plot(self.imu_time, self.imu_data, label='Sensor Data')
         axs2[1].set_title("IMU Orientation (degrees)")
-        axs2[2].plot(self.coordinates_time, self.coordinates['x'],self.coordinates_time, self.coordinates['y'], label='Sensor Data')
+        axs2[2].plot(self.coordinates_time, self.coordinates['x'], self.coordinates_time, self.coordinates['y'], label='Sensor Data')
         axs2[2].set_title("GPS Positional Data (x y coords vs time)")
         fig2.tight_layout()
         plt.show()
 
 def main(args=None):    
+
     rclpy.init(args=args)
     rectangle_controller = RectangleController()
     try:
@@ -170,4 +179,5 @@ def main(args=None):
         rclpy.shutdown()
 
 if __name__ == '__main__':
+    
     main()

@@ -7,7 +7,9 @@ from launch.substitutions import Command, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+
 def generate_launch_description():
+    
     # Set the path to different files and folders.
     pkg_gazebo_ros = FindPackageShare(package='gazebo_ros').find('gazebo_ros')   
     pkg_share = FindPackageShare(package='basic_mobile_robot').find('basic_mobile_robot')

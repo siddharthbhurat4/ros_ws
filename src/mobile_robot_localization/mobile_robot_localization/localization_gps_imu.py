@@ -9,7 +9,9 @@ from tf_transformations import euler_from_quaternion, quaternion_from_euler
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class SensorFusionLocalization(Node):
+
     def __init__(self):
         super().__init__('sensor_fusion_localization')
 
@@ -18,11 +20,11 @@ class SensorFusionLocalization(Node):
         # Fused Odometry Publishing Timer
         self.fused_odom_pub_timer = self.create_timer(0.1, self.timer_callback)
         # Subscribe to IMU
-        self.imu_subscription = self.create_subscription(Imu,'/imu/data',self.imu_callback,10)
+        self.imu_subscription = self.create_subscription(Imu, '/imu/data', self.imu_callback,10)
         # Subscribe to cmd_vel
-        self.cmd_vel_subscription = self.create_subscription(Twist,'/cmd_vel',self.cmd_vel_callback,10)
+        self.cmd_vel_subscription = self.create_subscription(Twist, '/cmd_vel', self.cmd_vel_callback, 10)
         # Subscribe to cmd_vel
-        self.gps_subscription = self.create_subscription(Odometry,'/wheel/odometry',self.gps_callback,10)
+        self.gps_subscription = self.create_subscription(Odometry, '/wheel/odometry', self.gps_callback, 10)
 
         self.x = 0.0
         self.y = 0.0
@@ -42,6 +44,7 @@ class SensorFusionLocalization(Node):
                            [0.0, 0.0, 0.1]])
 
     def imu_callback(self, msg):
+
         self.theta_imu = euler_from_quaternion([
                 msg.orientation.x,
                 msg.orientation.y,
@@ -49,12 +52,13 @@ class SensorFusionLocalization(Node):
                 msg.orientation.w])[2]
 
     def cmd_vel_callback(self, msg):
+
         self.v_lin = msg.linear.x
         self.omega = msg.angular.z
-        # print("vlin: ", self.v_lin)
-        self.control_vector = np.array([self.v_lin,self.omega]).T
+        self.control_vector = np.array([self.v_lin, self.omega]).T
 
     def gps_callback(self,msg):
+
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
         theta = euler_from_quaternion([
@@ -62,29 +66,29 @@ class SensorFusionLocalization(Node):
                 msg.pose.pose.orientation.y,
                 msg.pose.pose.orientation.z,
                 msg.pose.pose.orientation.w])[2]
-        self.gps_obs_vector = np.array([x,y,theta])
-        # print(self.gps_obs_vector)
+        self.gps_obs_vector = np.array([x, y, theta])
         
         
 
     def timer_callback(self):
+
         #State Transition Matrix for Linearized Dynamics (Prediction)
-        A = np.array([[1.0,  0.0,   0.0],
-                      [  0.0,1.0,   0.0],
-                      [  0.0,  0.0, 1.0]])
+        A = np.array([[1.0, 0.0, 0.0],
+                      [0.0, 1.0, 0.0],
+                      [0.0, 0.0, 1.0]])
         
         #Process Noise
-        process_noise = np.array([0.004,0.004,0.005])
+        process_noise = np.array([0.004, 0.004, 0.005])
 
         #State model noise covariance matrix
-        Q = np.array([[0.01,   0.0,   0.0],
-                      [  0.0, 0.01,   0.0],
-                      [  0.0,   0.0, 0.01]])
+        Q = np.array([[0.01, 0.0, 0.0],
+                      [0.0, 0.01, 0.0],
+                      [0.0, 0.0, 0.01]])
         
         # Measurement matrix H
-        H = np.array([[1.0,  0.0,   0.0],
-                      [  0.0,1.0,   0.0],
-                      [  0.0,  0.0, 1.0]])
+        H = np.array([[1.0, 0.0, 0.0],
+                      [0.0, 1.0, 0.0],
+                      [0.0, 0.0, 1.0]])
         
         # Sensor measurement noise covariance matrix R
         gps_x = self.gps_obs_vector[0]
@@ -97,15 +101,15 @@ class SensorFusionLocalization(Node):
          #Changing indoor outdoor conditions by making the sensor to be less accurate
         if (indoor_x - thresh < gps_x < indoor_x + thresh) and (indoor_y_max < gps_y < indoor_y_min):
             self.get_logger().info(f'ROBOT IS INDOORS !', once=True)
-            R = np.array([[2.0,   0.0,    0.0],
-                          [  0.0, 2.0,    0.0],
-                          [  0.0,    0.0, 2.0]])    
+            R = np.array([[2.0, 0.0, 0.0],
+                          [0.0, 2.0, 0.0],
+                          [0.0, 0.0, 2.0]])    
             self.num = 75889933   
         else:
             self.get_logger().info(f'ROBOT IS OUTDOORS !', once=True)
-            R = np.array([[0.01,   0.0,    0.0],
-                          [  0.0, 0.01,    0.0],
-                          [  0.0,    0.0, 0.01]])
+            R = np.array([[0.01, 0.0, 0.0],
+                          [0.0, 0.01, 0.0],
+                          [0.0, 0.0, 0.01]])
             if (self.num == 75889933):
                 self.num += 1
 
@@ -113,50 +117,52 @@ class SensorFusionLocalization(Node):
             self.get_logger().info(f'ROBOT IS BACK OUTDOORS !', once=True)
         
         #sensor noise
-        sensor_noise = np.array([0.001,0.001,0.003])
+        sensor_noise = np.array([0.001, 0.001, 0.003])
 
         #take the current time
         self.curr_time = self.get_clock().now().nanoseconds*1e-9
 
+        #Calculate delta time step
         delta_time = (self.curr_time - self.prev_time)/2
+
+        #Predict the state
         self.state_estimate = A @ (self.state_estimate) + (
             self.getBLinearized(self.wrapToPi(self.state_estimate[2]),delta_time)) @ (
                 self.control_vector)+(
                 process_noise)
         self.state_estimate[2] = self.wrapToPi(self.state_estimate[2])
 
-
+        #Predicted covariance
         self.P = A @ self.P @ A.T + Q
 
         #Calculate the Innovation between prediction and measurement
         innovation = self.gps_obs_vector - ((H @ self.state_estimate) + (sensor_noise))
 
-        # # Calculate the measurement residual covariance
-        S = H @ self.P @ H.T + R
-            
-        # # Calculate the Kalman gain
-        K = self.P @ H.T @ np.linalg.pinv(S)
-         
-        #Calculate an updated state estimate
-        self.state_estimate = self.state_estimate + (K @ innovation)
-        
-        # # # Update the state covariance estimate for time k
-        self.P = self.P - (K @ H @ self.P)
+        #Calculate the measurement residual covariance
+        S = H @ self.P @ H.T + R     
 
-        # print("P: ",self.P)
+        #Calculate the Kalman gain
+        K = self.P @ H.T @ np.linalg.pinv(S)
+
+        #Calculate an updated state estimate
+        self.state_estimate = self.state_estimate + (K @ innovation)     
+
+        #Update the state covariance estimate for time k
+        self.P = self.P - (K @ H @ self.P)
 
         #Update the states
         self.x = self.state_estimate[0]
         self.y = self.state_estimate[1]
         self.theta = self.state_estimate[2]
-        # print("State After: ",self.state_estimate)
         self.prev_time = self.curr_time
         self.publish_fused_odom()
 
     def wrapToPi(self,angle):
+
         return (angle + math.pi) % (2 * math.pi) - math.pi
 
     def getBLinearized(self,yaw, deltaTime):
+
         #Expresses how the state of the system [x,y,yaw] changes
         #from k-1 to k due to the control commands (i.e. control input).
         #:param yaw: The yaw angle (rotation angle around the z axis) in rad 
@@ -167,6 +173,7 @@ class SensorFusionLocalization(Node):
         return B
         
     def publish_fused_odom(self):
+
         # Create Odometry message for fused odometry
         fused_odom_msg = Odometry()
         fused_odom_msg.header.stamp = self.get_clock().now().to_msg()
@@ -191,6 +198,7 @@ class SensorFusionLocalization(Node):
         self.fused_odom_pub.publish(fused_odom_msg)
 
 def main(args=None):
+
     rclpy.init(args=args)
     sensor_fusion_node = SensorFusionLocalization()
     rclpy.spin(sensor_fusion_node)
@@ -198,4 +206,5 @@ def main(args=None):
     rclpy.shutdown()
 
 if __name__ == '__main__':
+    
     main()
