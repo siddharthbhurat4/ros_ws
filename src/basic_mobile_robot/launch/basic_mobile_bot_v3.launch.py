@@ -27,10 +27,10 @@ def generate_launch_description():
     use_simulator = LaunchConfiguration('use_simulator')
     world = LaunchConfiguration('world')
 
-    # Declare the launch arguments  
+    # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
-        name='model', 
-        default_value=default_model_path, 
+        name='model',
+        default_value=default_model_path,
         description='Absolute path to robot urdf file')
 
     declare_simulator_cmd = DeclareLaunchArgument(
@@ -60,13 +60,17 @@ def generate_launch_description():
 
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
+                                                   'launch',
+                                                   'gzserver.launch.py')),
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
 
     # Start Gazebo client
     start_gazebo_client_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
+                                                   'launch',
+                                                   'gzclient.launch.py')),
         condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))
 
     # Start robot localization using an Extended Kalman filter
@@ -86,7 +90,6 @@ def generate_launch_description():
         parameters=[{'use_sim_time': use_sim_time,
         'robot_description': Command(['xacro ', model])}],
         arguments=[default_model_path])
-
     # Create the launch description and populate
     ld = LaunchDescription()
     # Declare the launch options

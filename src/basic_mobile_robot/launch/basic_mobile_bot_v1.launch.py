@@ -24,7 +24,7 @@ def generate_launch_description():
     # Declare the launch arguments
     declare_model_path_cmd = DeclareLaunchArgument(
         name='model',
-        default_value=default_model_path, 
+        default_value=default_model_path,
         description='Absolute path to robot urdf file')
 
     declare_use_joint_state_publisher_cmd = DeclareLaunchArgument(
@@ -61,7 +61,7 @@ def generate_launch_description():
         condition=IfCondition(use_robot_state_pub),
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'use_sim_time': use_sim_time, 
+        parameters=[{'use_sim_time': use_sim_time,
         'robot_description': Command(['xacro ', model])}],
         arguments=[default_model_path])
 
@@ -78,5 +78,4 @@ def generate_launch_description():
     ld.add_action(start_joint_state_publisher_cmd)
     ld.add_action(start_joint_state_publisher_gui_node)
     ld.add_action(start_robot_state_publisher_cmd)
-
     return ld

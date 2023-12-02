@@ -103,7 +103,6 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_simulator_cmd)
     ld.add_action(declare_world_cmd)
-
     # Add any actions
     ld.add_action(start_gazebo_server_cmd)
     ld.add_action(start_gazebo_client_cmd)

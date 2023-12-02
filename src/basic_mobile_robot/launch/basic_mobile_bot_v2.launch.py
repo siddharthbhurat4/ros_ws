@@ -60,13 +60,16 @@ def generate_launch_description():
 
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')),
-        condition=IfCondition(use_simulator),
-        launch_arguments={'world': world}.items())
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
+                                                   'launch',
+                                                   'gzserver.launch.py')),
+        condition=IfCondition(use_simulator), launch_arguments={'world': world}.items())
 
     # Start Gazebo client
     start_gazebo_client_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
+                                                   'launch',
+                                                   'gzclient.launch.py')),
         condition=IfCondition(PythonExpression([use_simulator, ' and not ', headless])))
 
     # Subscribe to the joint states of the robot, and publish the 3D pose of each link.
@@ -74,10 +77,9 @@ def generate_launch_description():
         condition=IfCondition(use_robot_state_pub),
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'use_sim_time': use_sim_time, 
+        parameters=[{'use_sim_time': use_sim_time,
         'robot_description': Command(['xacro ', model])}],
         arguments=[default_model_path])
-
     # Create the launch description and populate
     ld = LaunchDescription()
     ld.add_action(declare_model_path_cmd)
