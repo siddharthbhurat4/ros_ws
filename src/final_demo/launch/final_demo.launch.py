@@ -59,9 +59,8 @@ def generate_launch_description():
 
     # Start Gazebo server
     start_gazebo_server_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros,
-                                                'launch',
-                                                'gzserver.launch.py')),
+        PythonLaunchDescriptionSource(os.path.join(pkg_gazebo_ros, 'launch',
+                                                    'gzserver.launch.py')),
         condition=IfCondition(use_simulator),
         launch_arguments={'world': world}.items())
 
