@@ -16,9 +16,12 @@ class RectangleController(Node):
                 self.odom_subscriber = self.create_subscription(Odometry,'/wheel/odometry',self.odom_callback,10)
                 self.fused_odom_sub = self.create_subscription(Odometry,'/fused/odometry',self.fused_odom_callback,10)
                 self.imu_subscription = self.create_subscription(Imu,'/imu/data',self.imu_callback,10)
-                self.kp_linear = 0.07  # Proportional gain for linear velocity
-                self.kp_angular = 0.08  # Proportional gain for angular velocity
-                self.dist_thresh = 0.5
+                self.kp_linear = 0.07  # Proportional gain for linear velocity  0.07
+                self.kp_angular = 0.07 # Proportional gain for angular velocity 0.08
+                self.kd_angular = 0.0 # Derivative gain for angular velocity
+                self.dist_thresh = 0.4
+                self.heading_thresh = 0.12
+                self.prev_heading_error = 0.0
                 self.waypoints = [
                 {'x': 0.0, 'y': 0.0},
                 {'x': 5.0, 'y': 0.0},
@@ -95,16 +98,20 @@ class RectangleController(Node):
                 heading_error = (target_heading - current_yaw_wrapped)
                 heading_error = self.wrapToPi(heading_error)
 
+                heading_error_derivative = (heading_error - self.prev_heading_error) / 0.1
+                self.prev_heading_error = heading_error
+
                 print("dist err: ", distance_error)
                 print("head err: ", heading_error)
                 print(self.current_waypoint_index)
                 print("--------------------------")
 
-                if distance_error < 0.5:
+                if distance_error < self.dist_thresh:
                         distance_error = 0.0
 
                 linear_velocity = self.kp_linear * distance_error
-                angular_velocity = self.kp_angular * heading_error
+                angular_velocity = self.kp_angular * heading_error + (self.kd_angular * heading_error_derivative)
+                # (ki_angular * self.integral_angular) + (kd_angular * heading_error_derivative)
 
                 cmd_vel_msg = Twist()
                 cmd_vel_msg.linear.x = linear_velocity
@@ -113,14 +120,14 @@ class RectangleController(Node):
                 self.publisher_.publish(cmd_vel_msg)
                 
                 # Check if the robot has reached the current waypoint
-                if distance_error < self.dist_thresh and abs(heading_error) < 0.12:
+                if distance_error < self.dist_thresh and abs(heading_error) < self.heading_thresh: #0.12
                         if self.current_waypoint_index == len(self.waypoints)-1:
                                 cmd_vel_msg = Twist()
                                 cmd_vel_msg.linear.x = 0.0
                                 cmd_vel_msg.angular.z = 0.0
                                 self.publisher_.publish(cmd_vel_msg)
                                 self.plot_coordinates()
-                                self.get_logger().info(f'RECTANGLE FOLLOW TEST: Robot reached all the 4 waypoints using the controller, Rectangle Completed !!', once=True)
+                                self.get_logger().warn(f'RECTANGLE FOLLOW TEST: Robot reached all the 4 waypoints using the controller, Rectangle Completed !!', once=True)
                         else:
                                 self.current_waypoint_index = (self.current_waypoint_index + 1)
                 self.noise += 0.0005                        
