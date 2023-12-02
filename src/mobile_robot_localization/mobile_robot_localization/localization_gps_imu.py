@@ -102,7 +102,7 @@ class SensorFusionLocalization(Node):
                           [  0.0,    0.0, 2.0]])    
             self.num = 75889933   
         else:
-            self.get_logger().info(f'ROBOT IS OUTDOORS !!', once=True)
+            self.get_logger().info(f'ROBOT IS OUTDOORS !', once=True)
             R = np.array([[0.01,   0.0,    0.0],
                           [  0.0, 0.01,    0.0],
                           [  0.0,    0.0, 0.01]])
