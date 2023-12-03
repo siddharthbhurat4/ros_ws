@@ -138,14 +138,14 @@ class RectangleController(Node):
         if distance_error < self.dist_thresh and \
                 abs(heading_error) < self.heading_thresh:  # 0.12
             if self.current_waypoint_index == len(self.waypoints)-1:
+                self.get_logger().info("RECTANGLE FOLLOW TEST: Robot reached all the 4 "
+                                       "waypoints using the controller "
+                                       "Rectangle Completed !!", once=True)
                 cmd_vel_msg = Twist()
                 cmd_vel_msg.linear.x = 0.0
                 cmd_vel_msg.angular.z = 0.0
                 self.publisher_.publish(cmd_vel_msg)
                 self.plot_coordinates()
-                self.get_logger().info("RECTANGLE FOLLOW TEST: Robot reached all the 4 "
-                                       "waypoints using the controller "
-                                       "Rectangle Completed !!", once=True)
             else:
                 self.current_waypoint_index = (self.current_waypoint_index + 1)
         self.noise += 0.0005
