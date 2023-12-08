@@ -1,0 +1,15 @@
+version: '3'
+services:
+  ros2-container:
+    build:
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+    volumes:
+      - /home/siddharth/ros_ws:/workspaces/ros_ws/  # Mount the local scripts directory into the container
+    # command: [ "ls"]
+    command: >
+      bash -c "
+      cd workspaces/ros_ws &&
+      ls &&
+      ./run_demo.sh
+      "
