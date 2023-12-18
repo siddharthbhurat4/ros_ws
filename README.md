@@ -57,7 +57,7 @@ You should already have Docker, Docker Compose and VSCode (if using vs-code opti
 * In order to close the simulation, go to the same terminal where you run the last command and press `ctrl + c`
 
 
-## Option 2 - Using Docker Compose
+## Option 2 - Using VSCode
 ### Open cloned repo in vscode
 
 * Now that you've cloned the repo onto your computer, you can open it in VSCode (File->Open Folder). 
@@ -83,6 +83,8 @@ You should already have Docker, Docker Compose and VSCode (if using vs-code opti
   
   `./run_demo.sh`
 
+
+## Results
 * On running these commands the gazebo window will show up on the screen where you can see the robot in gazebo town world along with 2 walls at the center which denote the indoor and outdoor environment.
 
 ![](https://github.com/siddharthbhurat4/ros_ws/blob/humble/gazebo_bot.png)
