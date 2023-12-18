@@ -17,9 +17,10 @@ The current demo showcases the localization system in action, visualized using G
 
 ### Prerequisites
 
-You should already have Docker and VSCode with the remote containers plugin installed on your system.
+You should already have Docker, Docker Compose and VSCode (if using vs-code option) with the remote containers plugin installed on your system.
 
 * [docker](https://docs.docker.com/engine/install/)
+* [docker compose](https://docs.docker.com/compose/install/)
 * [vscode](https://code.visualstudio.com/)
 * [vscode remote containers plugin](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
@@ -28,7 +29,36 @@ You should already have Docker and VSCode with the remote containers plugin inst
 * Click on "code" and copy the link to repository
 * Clone it in your local system
 
-### Open it in vscode
+## Option 1 - Using Docker Compose
+
+* Copy the path to the ros_ws directory you recently cloned
+
+![finding directory path](https://github.com/siddharthbhurat4/ros_ws/blob/humble/directory.png)
+
+* Paste the copied path in the docker-compose.yml file in the volumes section as shown below
+
+![pasting in docker compose](https://github.com/siddharthbhurat4/ros_ws/blob/humble/path_compose.png)
+
+* After updating the docker-compose.yml, run:
+  
+  * Giving Display Permissions
+    
+      ` xhost + `
+  
+  * Build the Docker file and creating a container
+
+    ` docker-compose build `
+
+  * Run the container
+    
+    ` docker-compose up `
+
+* Running the above commands will run the simulation and show it in the gazebo window and at the end of simulation, all the plots will be displayed.
+* In order to close the simulation, go to the same terminal where you run the last command and press `ctrl + c`
+
+
+## Option 2 - Using Docker Compose
+### Open cloned repo in vscode
 
 * Now that you've cloned the repo onto your computer, you can open it in VSCode (File->Open Folder). 
 
