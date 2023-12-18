@@ -45,7 +45,9 @@ You should already have Docker, Docker Compose and VSCode (if using vs-code opti
     
       ` xhost + `
   
-  * Build the Docker file and creating a container
+  * Change your directory to the cloned repo that is "ros_ws"
+
+  * Building the Docker file and creating a container
 
     ` docker-compose build `
 
