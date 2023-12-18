@@ -4,12 +4,16 @@ services:
     build:
       context: .
       dockerfile: ./.devcontainer/Dockerfile
+    tty : true
+    privileged: true
     volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
       - /home/siddharth/ros_ws:/workspaces/ros_ws/  # Mount the local scripts directory into the container
-    # command: [ "ls"]
+    environment:
+      - DISPLAY=${DISPLAY}
+    network_mode: "host"
     command: >
       bash -c "
       cd workspaces/ros_ws &&
-      ls &&
       ./run_demo.sh
       "
