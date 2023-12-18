@@ -102,7 +102,7 @@ class SensorFusionLocalization(Node):
         thresh = 2.0
         indoor_x = 5.0
         indoor_y_min = -2.0
-        indoor_y_max = -8.0
+        indoor_y_max = -8.5
 
         # Changing indoor outdoor conditions by making the sensor to be less accurate
         if (indoor_x - thresh < gps_x < indoor_x + thresh) \
